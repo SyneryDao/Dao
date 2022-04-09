@@ -1,0 +1,27 @@
+{
+  "name": "dao",
+  "version": "1.0.0",
+  "description": "community DAO to buy,sell, stake and mint NFTs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SyneryDao/Dao.git"
+  },
+  "author": "vgvishesh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SyneryDao/Dao/issues"
+  },
+  "homepage": "https://github.com/SyneryDao/Dao#readme",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "chai": "^4.3.6",
+    "ethereum-waffle": "^3.4.4",
+    "ethers": "^5.6.2",
+    "hardhat": "^2.9.3"
+  }
+}
