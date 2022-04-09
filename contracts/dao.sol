@@ -9,41 +9,99 @@ contract SynergyDAO {
         uint256 tokensOwned;
     }
 
+    enum ProposalType {
+        BUY,
+        SELL,
+        STAKE,
+        ISSUE_COLLATERAL,
+        ALLOW_BUSINESS_USAGE
+    }
+
+    enum VoteType {
+        YES,
+        NO
+    }
+
+    struct Proposal {
+        uint256 nftTokenId;
+        uint256 deadline;
+        uint256 yesVotes;
+        uint256 noVotes;
+        bool executed;
+        ProposalType proposalType;
+        mapping(address => bool) voters;
+    }
+
     uint256 private _totalGovTokens;
-    mapping(address => Member) public memberGovTokenMap;
+    uint256 public numProposals;
+    mapping(address => Member) public members;
+    mapping(uint256 => Proposal) public proposals;
+
+    modifier memberOnly() {
+        require(members[msg.sender].isJoined == true, "Not a member!");
+        _;
+    }
 
     constructor() {
         _totalGovTokens = 10000;
     }
 
+    //basic DAO operations............
     function totalBalance() external view returns (uint256) {
         return _totalGovTokens;
     }
 
     function isMember() external view returns (bool) {
-        return memberGovTokenMap[msg.sender].isJoined;
+        return members[msg.sender].isJoined;
     }
 
     function join() public returns (uint256) {
-        require(
-            memberGovTokenMap[msg.sender].isJoined == false,
-            "Already a member!"
-        );
-        memberGovTokenMap[msg.sender] = Member({
-            isJoined: true,
-            tokensOwned: 10
-        });
+        require(members[msg.sender].isJoined == false, "Already a member!");
+        members[msg.sender] = Member({isJoined: true, tokensOwned: 10});
         _totalGovTokens -= 10;
-        return memberGovTokenMap[msg.sender].tokensOwned;
+        return members[msg.sender].tokensOwned;
     }
 
-    function leave() external {
-        require(
-            memberGovTokenMap[msg.sender].isJoined == true,
-            "Not a member!"
-        );
-        memberGovTokenMap[msg.sender].isJoined = false;
-        _totalGovTokens += memberGovTokenMap[msg.sender].tokensOwned;
-        memberGovTokenMap[msg.sender].tokensOwned = 0;
+    function leave() external memberOnly {
+        require(members[msg.sender].isJoined == true, "Not a member!");
+        members[msg.sender].isJoined = false;
+        _totalGovTokens += members[msg.sender].tokensOwned;
+        members[msg.sender].tokensOwned = 0;
+    }
+
+    // xxxxxxxx------Basic DAO operations---------xxxxxxxxxx
+
+    function createProposal(uint256 _forTokenId, ProposalType _proposalType)
+        external
+        memberOnly
+        returns (uint256)
+    {
+        Proposal storage proposal = proposals[numProposals];
+        proposal.nftTokenId = _forTokenId;
+        proposal.deadline = block.timestamp + 2 minutes;
+        proposal.proposalType = _proposalType;
+
+        numProposals++;
+
+        return numProposals;
+    }
+
+    function voteOnProposal(uint256 _proposalId, VoteType _vote)
+        external
+        memberOnly
+    {
+        Proposal storage proposal = proposals[_proposalId];
+        require(proposal.deadline > block.timestamp, "INACTIVE_PROPOSAL");
+        require(proposal.voters[msg.sender] == false, "ALREADY_VOTED");
+
+        proposal.voters[msg.sender] = true;
+
+        if (_vote == VoteType.YES) {
+            proposal.yesVotes += 1;
+        } else {
+            proposal.noVotes += 1;
+        }
+
+        members[msg.sender].tokensOwned -= 1;
     }
 }
