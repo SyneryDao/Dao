@@ -15,11 +15,16 @@ async function main() {
 
   // We get the contract to deploy
   const DAO = await hre.ethers.getContractFactory("SynergyDAO");
+  const HelloNft = await hre.ethers.getContractFactory("HelloNft");
+
   const daoContract = await DAO.deploy();
+  const helloNftContract = await HelloNft.deploy();
 
   await daoContract.deployed();
+  await helloNftContract.deployed();
 
   console.log("SynergyDao deployed to:", daoContract.address);
+  console.log("NFT deployed to address", helloNftContract.address)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
