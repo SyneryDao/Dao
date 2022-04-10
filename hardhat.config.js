@@ -1,5 +1,4 @@
 const { task } = require("hardhat/config");
-
 require("@nomiclabs/hardhat-waffle");
 
 task("mintNFT", "Mint Free NFT from HelloNft")
@@ -7,7 +6,7 @@ task("mintNFT", "Mint Free NFT from HelloNft")
   .addParam("ownerAddress", "The address of the owner of the NFT")
   .addParam("uri", "URL for the nft data")
   .setAction(async (args, hre) => {
-    const NFTContract = await hre.ethers.getContractAt(
+    const NFTContract = await ethers.getContractAt(
       "HelloNft",
       args.nftContract
     );
@@ -93,4 +92,11 @@ task("getNftOwner", "get the ownerof the NFT token")
  */
 module.exports = {
   solidity: "0.8.4",
+  networks: {
+    hardhat: {
+    },
+  },
+  gasReporter: {
+    currency: "USD",
+  }
 };
