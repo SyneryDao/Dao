@@ -3,7 +3,9 @@ node_modules
 coverage
 coverage.json
 typechain
-contracts/bayt.sol
+contracts/bayc.sol
+contracts/mmt.sol
+contracts/nftport.sol
 
 #Hardhat files
 cache

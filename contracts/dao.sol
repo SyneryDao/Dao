@@ -50,6 +50,10 @@ contract SynergyDAO is IERC721Receiver {
     }
 
     //basic DAO operations............
+    function getMembers() external view returns (address) {
+        return msg.sender;
+    }
+
     function totalBalance() external view returns (uint256) {
         return _totalGovTokens;
     }
